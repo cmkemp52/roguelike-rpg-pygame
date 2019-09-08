@@ -34,11 +34,16 @@ class Player(pygame.sprite.Sprite):
         self.weapon = 0
         #set character base model
         self.image.blit(charsheet, (0,0), (0,0,16,16))
-        #set character gear
+        #set character armor
         if self.armor == 0:
-            self.image.blit(charsheet, (0,0), (187,0,16,16))
+            self.image.blit(charsheet, (0,0), (170,0,16,16))
         elif self.armor == 1:
             self.image.blit(charsheet, (0,0), (272,17,16,16))
+        #set character pants
+        self.image.blit(charsheet, (0,0), (51,17,16,16))
+        #set character hair
+        self.image.blit(charsheet, (0,0), (442,0,16,16))
+        #set character weapon
         if self.weapon == 0:
             self.image.blit(charsheet, (0,0), (833,0,16,16))
         elif self.weapon == 1:
