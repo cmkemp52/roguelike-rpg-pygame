@@ -8,7 +8,7 @@ img_folder = os.path.join(game_folder, 'img')
 charsheet = pygame.image.load(os.path.join(img_folder, 'characters.png'))
 spritesheet = pygame.image.load(os.path.join(img_folder, 'spritesheet.png'))
 
-floor1 = [1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1] 
+floor1 = [1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1] 
 
 #Parameters
 WIDTH = 800
