@@ -15,12 +15,7 @@ WIDTH = 800
 HEIGHT = 800
 FPS = 30
 
-# Colors (R, G, B)
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -83,8 +78,10 @@ class Floorset(pygame.sprite.Sprite):
                     dirt(self)
                 elif floor1[self.loc[0]][self.loc[1]] == 1:
                     wall(self)
+                elif floor1[self.loc[0]][self.loc[1]] == 9:
+                    void(self)
             else:
-                self.image.fill(BLACK)
+                void(self)
 
 
 
