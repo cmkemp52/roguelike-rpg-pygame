@@ -3,6 +3,7 @@ import os
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, 'img')
 spritesheet = pygame.image.load(os.path.join(img_folder, 'spritesheet.png'))
+charsheet = pygame.image.load(os.path.join(img_folder, 'characters.png'))
 
 # Colors (R, G, B)
 BLACK = (0, 0, 0)
@@ -22,3 +23,5 @@ def wall(self):
 
 def void(self):
     self.image.fill(BLACK)
+
+

@@ -3,7 +3,6 @@ import random
 import os
 from floors import *
 from supporting import *
-from characters import *
 
 #set up assets
 game_folder = os.path.dirname(__file__)
@@ -19,6 +18,28 @@ enemylocations = []
 cfloor = floor1
 cmons = floor1mons
 
+def charsprite(self):
+    #set background
+    if cfloor[self.loc[0]][self.loc[1]] == 0:
+        dirt(self)
+    elif cfloor[self.loc[0]][self.loc[1]] == 1:
+        wall(self)
+    #set character base model
+    self.image.blit(charsheet, (0,2), (0,0,16,16))
+    #set character armor
+    if self.armor == 0:
+        self.image.blit(charsheet, (0,2), (x17(10),0,16,16))
+    elif self.armor == 1:
+        self.image.blit(charsheet, (0,2), (x17(16),17,16,16))
+    #set character pants
+    self.image.blit(charsheet, (0,2), (x17(3),17,16,16))
+    #set character hair
+    self.image.blit(charsheet, (0,2), (x17(26),0,16,16))
+    #set character weapon
+    if self.weapon == 0:
+        self.image.blit(charsheet, (0,2), (x17(49),0,16,16))
+    elif self.weapon == 1:
+        self.image.blit(charsheet, (0,2), (x17(51),x17(9),16,16))
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         #initialize sprite
@@ -29,42 +50,35 @@ class Player(pygame.sprite.Sprite):
         #set character stats
         self.maxhealth = 20
         self.currenthealth = 20
+        self.power = 5
         self.lineofsight = 4
         self.armor = 0
         self.weapon = 0
-        #set background
-        if cfloor[self.loc[0]][self.loc[1]] == 0:
-            dirt(self)
-        elif cfloor[self.loc[0]][self.loc[1]] == 1:
-            wall(self)
-        #set character base model
-        self.image.blit(charsheet, (0,2), (0,0,16,16))
-        #set character armor
-        if self.armor == 0:
-            self.image.blit(charsheet, (0,2), (x17(10),0,16,16))
-        elif self.armor == 1:
-            self.image.blit(charsheet, (0,2), (x17(16),17,16,16))
-        #set character pants
-        self.image.blit(charsheet, (0,2), (x17(3),17,16,16))
-        #set character hair
-        self.image.blit(charsheet, (0,2), (x17(26),0,16,16))
-        #set character weapon
-        if self.weapon == 0:
-            self.image.blit(charsheet, (0,2), (x17(49),0,16,16))
-        elif self.weapon == 1:
-            self.image.blit(charsheet, (0,2), (x17(51),x17(9),16,16))
-        #set character location
+        #set location
         self.rect = self.image.get_rect()
         self.rect.center = [198+self.loc[0]*16,200+self.loc[1]*16]
+    def attack(self,enemy):
+        enemy.currenthealth-=self.power
     def update(self):
         if self.currenthealth == self.maxhealth:
+            charsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,16,2))
         elif self.currenthealth > self.maxhealth/2:
+            charsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,12,2))
         elif self.currenthealth > (self.maxhealth/2)/2:
+            charsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,8,2))
         else:
+            charsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,4,2))
+
+def goblinsprite(self):
+    if cfloor[self.loc[0]][self.loc[1]] == 0:
+        dirt(self)
+    elif cfloor[self.loc[0]][self.loc[1]] == 1:
+        wall(self)
+    self.image.blit(charsheet, (0,2), (0,x17(3),16,16))
 
 class Goblin(pygame.sprite.Sprite):
     def __init__(self, locat):
@@ -73,23 +87,24 @@ class Goblin(pygame.sprite.Sprite):
         self.image = pygame.Surface((16, 18))
         self.maxhealth = 6
         self.currenthealth = 6
-        self.attack = 3
+        self.power = 3
         self.loc=locat
-        if cfloor[self.loc[0]][self.loc[1]] == 0:
-            dirt(self)
-        elif cfloor[self.loc[0]][self.loc[1]] == 1:
-            wall(self)
-        self.image.blit(charsheet, (0,2), (0,x17(3),16,16))
         self.rect = self.image.get_rect()
         self.rect.center = [198+self.loc[0]*16,200+self.loc[1]*16]
+    def attack(self,enemy):
+        enemy.currenthealth-=self.power
     def update(self):
         if self.currenthealth == self.maxhealth:
+            goblinsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,16,2))
         elif self.currenthealth > self.maxhealth/2:
+            goblinsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,12,2))
         elif self.currenthealth > (self.maxhealth/2)/2:
+            goblinsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,8,2))
         elif self.currenthealth > 0:
+            goblinsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,4,2))
         else:
             enemylocations.remove(self.loc)
@@ -101,6 +116,7 @@ class Goblin(pygame.sprite.Sprite):
 class Floorset(pygame.sprite.Sprite):
     def __init__(self,locat):
         #initialize sprite
+        self.currenthealth = 9999999
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((16, 16))
         #floor location
@@ -168,28 +184,36 @@ while running:
             if event.key == pygame.K_LEFT:
                 if cfloor[player.loc[0]-1][player.loc[1]] == 0:
                     if [player.loc[0]-1,player.loc[1]] in enemylocations:
-                        print("HYAAH!")
+                        for goblin in all_sprites:
+                            if goblin.loc == [player.loc[0]-1,player.loc[1]]:
+                                player.attack(goblin)
                     else:
                         player.loc = [player.loc[0]-1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]-16,player.rect.center[1]]
             if event.key == pygame.K_RIGHT:
                 if cfloor[player.loc[0]+1][player.loc[1]] == 0:
                     if [player.loc[0]+1,player.loc[1]] in enemylocations:
-                        print("HYAAH!")
+                        for goblin in all_sprites:
+                            if goblin.loc == [player.loc[0]+1,player.loc[1]]:
+                                player.attack(goblin)
                     else:
                         player.loc = [player.loc[0]+1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
             if event.key == pygame.K_UP:
                 if cfloor[player.loc[0]][player.loc[1]-1] == 0:
                     if [player.loc[0],player.loc[1]-1] in enemylocations:
-                        print("HYAAH!")
+                        for goblin in all_sprites:
+                            if goblin.loc == [player.loc[0],player.loc[1]-1]:
+                                player.attack(goblin)
                     else:
                         player.loc = [player.loc[0],player.loc[1]-1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]-16]
             if event.key == pygame.K_DOWN:
                 if cfloor[player.loc[0]][player.loc[1]+1] == 0:
                     if [player.loc[0],player.loc[1]+1] in enemylocations:
-                        print("HYAAH!")
+                        for goblin in all_sprites:
+                            if goblin.loc == [player.loc[0],player.loc[1]+1]:
+                                player.attack(goblin)
                     else:
                         player.loc = [player.loc[0],player.loc[1]+1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]+16]
