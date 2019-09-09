@@ -8,7 +8,6 @@ from supporting import *
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, 'img')
 charsheet = pygame.image.load(os.path.join(img_folder, 'characters.png'))
-spritesheet = pygame.image.load(os.path.join(img_folder, 'spritesheet.png'))
 
 
 #Parameters
@@ -35,9 +34,9 @@ class Player(pygame.sprite.Sprite):
         self.weapon = 0
         #set background
         if floor1[self.loc[0]][self.loc[1]] == 0:
-            self.image.blit(spritesheet, (0,0), (x17(10),x17(8),16,16))
+            dirt(self)
         elif floor1[self.loc[0]][self.loc[1]] == 1:
-            self.image.blit(spritesheet, (0,0), (x17(10),x17(2),16,16))
+            wall(self)
         #set character base model
         self.image.blit(charsheet, (0,0), (0,0,16,16))
         #set character armor
@@ -66,9 +65,9 @@ class Floorset(pygame.sprite.Sprite):
         #floor location
         self.loc = locat
         if floor1[self.loc[0]][self.loc[1]] == 0:
-            self.image.blit(spritesheet, (0,0), (x17(10),x17(8),16,16))
+            dirt(self)
         elif floor1[self.loc[0]][self.loc[1]] == 1:
-            self.image.blit(spritesheet, (0,0), (x17(10),x17(2),16,16))
+            wall(self)
         #set floor sprite location
         self.rect = self.image.get_rect()
         self.rect.center = [200+self.loc[0]*16,200+self.loc[1]*16]
@@ -79,7 +78,7 @@ class Floorset(pygame.sprite.Sprite):
 #initialize and create window
 pygame.init()
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
-pygame.display.set_caption("My Game")
+pygame.display.set_caption("Roguelike RPG")
 clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
 #creates floor sprites
