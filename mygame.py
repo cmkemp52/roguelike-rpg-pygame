@@ -32,6 +32,11 @@ class Player(pygame.sprite.Sprite):
         #set character stats
         self.armor = 0
         self.weapon = 0
+        #set background
+        if floor1[self.loc[0]][self.loc[1]] == 0:
+            self.image.blit(spritesheet, (0,0), (170,136,16,16))
+        elif floor1[self.loc[0]][self.loc[1]] == 1:
+            self.image.blit(spritesheet, (0,0), (170,34,16,16))
         #set character base model
         self.image.blit(charsheet, (0,0), (0,0,16,16))
         #set character armor
