@@ -1,6 +1,8 @@
 import pygame
 import random
 import os
+from floors import *
+from supporting import *
 
 #set up assets
 game_folder = os.path.dirname(__file__)
@@ -8,7 +10,6 @@ img_folder = os.path.join(game_folder, 'img')
 charsheet = pygame.image.load(os.path.join(img_folder, 'characters.png'))
 spritesheet = pygame.image.load(os.path.join(img_folder, 'spritesheet.png'))
 
-floor1 = [1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1] 
 
 #Parameters
 WIDTH = 800
@@ -34,25 +35,25 @@ class Player(pygame.sprite.Sprite):
         self.weapon = 0
         #set background
         if floor1[self.loc[0]][self.loc[1]] == 0:
-            self.image.blit(spritesheet, (0,0), (170,136,16,16))
+            self.image.blit(spritesheet, (0,0), (x17(10),x17(8),16,16))
         elif floor1[self.loc[0]][self.loc[1]] == 1:
-            self.image.blit(spritesheet, (0,0), (170,34,16,16))
+            self.image.blit(spritesheet, (0,0), (x17(10),x17(2),16,16))
         #set character base model
         self.image.blit(charsheet, (0,0), (0,0,16,16))
         #set character armor
         if self.armor == 0:
-            self.image.blit(charsheet, (0,0), (170,0,16,16))
+            self.image.blit(charsheet, (0,0), (x17(10),0,16,16))
         elif self.armor == 1:
-            self.image.blit(charsheet, (0,0), (272,17,16,16))
+            self.image.blit(charsheet, (0,0), (x17(16),17,16,16))
         #set character pants
-        self.image.blit(charsheet, (0,0), (51,17,16,16))
+        self.image.blit(charsheet, (0,0), (x17(3),17,16,16))
         #set character hair
-        self.image.blit(charsheet, (0,0), (442,0,16,16))
+        self.image.blit(charsheet, (0,0), (x17(26),0,16,16))
         #set character weapon
         if self.weapon == 0:
-            self.image.blit(charsheet, (0,0), (833,0,16,16))
+            self.image.blit(charsheet, (0,0), (x17(49),0,16,16))
         elif self.weapon == 1:
-            self.image.blit(charsheet, (0,0), (867,170,16,16))
+            self.image.blit(charsheet, (0,0), (x17(51),x17(9),16,16))
         #set character location
         self.rect = self.image.get_rect()
         self.rect.center = [200+self.loc[0]*16,200+self.loc[1]*16]
@@ -65,9 +66,9 @@ class Floorset(pygame.sprite.Sprite):
         #floor location
         self.loc = locat
         if floor1[self.loc[0]][self.loc[1]] == 0:
-            self.image.blit(spritesheet, (0,0), (170,136,16,16))
+            self.image.blit(spritesheet, (0,0), (x17(10),x17(8),16,16))
         elif floor1[self.loc[0]][self.loc[1]] == 1:
-            self.image.blit(spritesheet, (0,0), (170,34,16,16))
+            self.image.blit(spritesheet, (0,0), (x17(10),x17(2),16,16))
         #set floor sprite location
         self.rect = self.image.get_rect()
         self.rect.center = [200+self.loc[0]*16,200+self.loc[1]*16]
