@@ -3,6 +3,7 @@ import random
 import os
 from floors import *
 from supporting import *
+from characters import *
 
 #set up assets
 game_folder = os.path.dirname(__file__)
@@ -14,44 +15,88 @@ charsheet = pygame.image.load(os.path.join(img_folder, 'characters.png'))
 WIDTH = 800
 HEIGHT = 800
 FPS = 30
-
-
+enemylocations = []
+cfloor = floor1
+cmons = floor1mons
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         #initialize sprite
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((16, 16))
+        self.image = pygame.Surface((16, 18))
         #set character location
         self.loc = [2,2]
         #set character stats
+        self.maxhealth = 20
+        self.currenthealth = 20
         self.lineofsight = 4
         self.armor = 0
         self.weapon = 0
         #set background
-        if floor1[self.loc[0]][self.loc[1]] == 0:
+        if cfloor[self.loc[0]][self.loc[1]] == 0:
             dirt(self)
-        elif floor1[self.loc[0]][self.loc[1]] == 1:
+        elif cfloor[self.loc[0]][self.loc[1]] == 1:
             wall(self)
         #set character base model
-        self.image.blit(charsheet, (0,0), (0,0,16,16))
+        self.image.blit(charsheet, (0,2), (0,0,16,16))
         #set character armor
         if self.armor == 0:
-            self.image.blit(charsheet, (0,0), (x17(10),0,16,16))
+            self.image.blit(charsheet, (0,2), (x17(10),0,16,16))
         elif self.armor == 1:
-            self.image.blit(charsheet, (0,0), (x17(16),17,16,16))
+            self.image.blit(charsheet, (0,2), (x17(16),17,16,16))
         #set character pants
-        self.image.blit(charsheet, (0,0), (x17(3),17,16,16))
+        self.image.blit(charsheet, (0,2), (x17(3),17,16,16))
         #set character hair
-        self.image.blit(charsheet, (0,0), (x17(26),0,16,16))
+        self.image.blit(charsheet, (0,2), (x17(26),0,16,16))
         #set character weapon
         if self.weapon == 0:
-            self.image.blit(charsheet, (0,0), (x17(49),0,16,16))
+            self.image.blit(charsheet, (0,2), (x17(49),0,16,16))
         elif self.weapon == 1:
-            self.image.blit(charsheet, (0,0), (x17(51),x17(9),16,16))
+            self.image.blit(charsheet, (0,2), (x17(51),x17(9),16,16))
         #set character location
         self.rect = self.image.get_rect()
-        self.rect.center = [200+self.loc[0]*16,200+self.loc[1]*16]
+        self.rect.center = [198+self.loc[0]*16,200+self.loc[1]*16]
+    def update(self):
+        if self.currenthealth == self.maxhealth:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,16,2))
+        elif self.currenthealth > self.maxhealth/2:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,12,2))
+        elif self.currenthealth > (self.maxhealth/2)/2:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,8,2))
+        else:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,4,2))
+
+class Goblin(pygame.sprite.Sprite):
+    def __init__(self, locat):
+        #initialize sprite
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((16, 18))
+        self.maxhealth = 6
+        self.currenthealth = 6
+        self.attack = 3
+        self.loc=locat
+        if cfloor[self.loc[0]][self.loc[1]] == 0:
+            dirt(self)
+        elif cfloor[self.loc[0]][self.loc[1]] == 1:
+            wall(self)
+        self.image.blit(charsheet, (0,2), (0,x17(3),16,16))
+        self.rect = self.image.get_rect()
+        self.rect.center = [198+self.loc[0]*16,200+self.loc[1]*16]
+    def update(self):
+        if self.currenthealth == self.maxhealth:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,16,2))
+        elif self.currenthealth > self.maxhealth/2:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,12,2))
+        elif self.currenthealth > (self.maxhealth/2)/2:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,8,2))
+        elif self.currenthealth > 0:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,4,2))
+        else:
+            enemylocations.remove(self.loc)
+            all_sprites.remove(self)
+
+
+
 
 class Floorset(pygame.sprite.Sprite):
     def __init__(self,locat):
@@ -74,12 +119,17 @@ class Floorset(pygame.sprite.Sprite):
                 visible.append([player.loc[0]-i,player.loc[1]-x])
         #shows floors based on player's line of sight variable
             if self.loc in visible:
-                if floor1[self.loc[0]][self.loc[1]] == 0:
+                if cfloor[self.loc[0]][self.loc[1]] == 0:
                     dirt(self)
-                elif floor1[self.loc[0]][self.loc[1]] == 1:
+                elif cfloor[self.loc[0]][self.loc[1]] == 1:
                     wall(self)
-                elif floor1[self.loc[0]][self.loc[1]] == 9:
+                elif cfloor[self.loc[0]][self.loc[1]] == 9:
                     void(self)
+                if self.loc in cmons:
+                    cmons.remove(self.loc)
+                    goblin = Goblin(self.loc)
+                    enemylocations.append(self.loc)
+                    all_sprites.add(goblin)
             else:
                 void(self)
 
@@ -94,8 +144,8 @@ clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
 player = Player()
 #creates floor sprites
-for i in range(len(floor1)):
-    for x in range(len(floor1[i])):
+for i in range(len(cfloor)):
+    for x in range(len(cfloor[i])):
         floorsprite = Floorset([i,x])
         all_sprites.add(floorsprite)
 #creates player
@@ -116,23 +166,33 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                if(floor1[player.loc[0]-1][player.loc[1]] == 0):
-                    player.loc = [player.loc[0]-1,player.loc[1]]
-                    print(player.loc)
-                    player.rect.center = [player.rect.center[0]-16,player.rect.center[1]]
+                if cfloor[player.loc[0]-1][player.loc[1]] == 0:
+                    if [player.loc[0]-1,player.loc[1]] in enemylocations:
+                        print("HYAAH!")
+                    else:
+                        player.loc = [player.loc[0]-1,player.loc[1]]
+                        player.rect.center = [player.rect.center[0]-16,player.rect.center[1]]
             if event.key == pygame.K_RIGHT:
-                if(floor1[player.loc[0]+1][player.loc[1]] == 0):
-                    player.loc = [player.loc[0]+1,player.loc[1]]
-                    print(player.loc)
-                    player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
+                if cfloor[player.loc[0]+1][player.loc[1]] == 0:
+                    if [player.loc[0]+1,player.loc[1]] in enemylocations:
+                        print("HYAAH!")
+                    else:
+                        player.loc = [player.loc[0]+1,player.loc[1]]
+                        player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
             if event.key == pygame.K_UP:
-                if(floor1[player.loc[0]][player.loc[1]-1] == 0):
-                    player.loc = [player.loc[0],player.loc[1]-1]
-                    player.rect.center = [player.rect.center[0],player.rect.center[1]-16]
+                if cfloor[player.loc[0]][player.loc[1]-1] == 0:
+                    if [player.loc[0],player.loc[1]-1] in enemylocations:
+                        print("HYAAH!")
+                    else:
+                        player.loc = [player.loc[0],player.loc[1]-1]
+                        player.rect.center = [player.rect.center[0],player.rect.center[1]-16]
             if event.key == pygame.K_DOWN:
-                if(floor1[player.loc[0]][player.loc[1]+1] == 0):
-                    player.loc = [player.loc[0],player.loc[1]+1]
-                    player.rect.center = [player.rect.center[0],player.rect.center[1]+16]
+                if cfloor[player.loc[0]][player.loc[1]+1] == 0:
+                    if [player.loc[0],player.loc[1]+1] in enemylocations:
+                        print("HYAAH!")
+                    else:
+                        player.loc = [player.loc[0],player.loc[1]+1]
+                        player.rect.center = [player.rect.center[0],player.rect.center[1]+16]
     
     #Update
     all_sprites.update()
