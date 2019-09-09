@@ -30,6 +30,7 @@ class Player(pygame.sprite.Sprite):
         #set character location
         self.loc = [2,2]
         #set character stats
+        self.lineofsight = 4
         self.armor = 0
         self.weapon = 0
         #set background
@@ -64,13 +65,26 @@ class Floorset(pygame.sprite.Sprite):
         self.image = pygame.Surface((16, 16))
         #floor location
         self.loc = locat
-        if floor1[self.loc[0]][self.loc[1]] == 0:
-            dirt(self)
-        elif floor1[self.loc[0]][self.loc[1]] == 1:
-            wall(self)
         #set floor sprite location
         self.rect = self.image.get_rect()
         self.rect.center = [200+self.loc[0]*16,200+self.loc[1]*16]
+    def update(self):
+        #generating vision list
+        visible = []
+        for i in range(0,player.lineofsight):
+            for x in range(0,player.lineofsight):
+                visible.append([player.loc[0]+i,player.loc[1]+x])
+                visible.append([player.loc[0]-i,player.loc[1]+x])
+                visible.append([player.loc[0]+i,player.loc[1]-x])
+                visible.append([player.loc[0]-i,player.loc[1]-x])
+        #shows floors based on player's line of sight variable
+            if self.loc in visible:
+                if floor1[self.loc[0]][self.loc[1]] == 0:
+                    dirt(self)
+                elif floor1[self.loc[0]][self.loc[1]] == 1:
+                    wall(self)
+            else:
+                self.image.fill(BLACK)
 
 
 
@@ -81,13 +95,13 @@ screen = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Roguelike RPG")
 clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
+player = Player()
 #creates floor sprites
 for i in range(len(floor1)):
     for x in range(len(floor1[i])):
         floorsprite = Floorset([i,x])
         all_sprites.add(floorsprite)
 #creates player
-player = Player()
 all_sprites.add(player)
 
 
