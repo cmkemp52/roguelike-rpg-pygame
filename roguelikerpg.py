@@ -136,12 +136,23 @@ class Player(pygame.sprite.Sprite):
         self.maxhealth = 20
         self.currenthealth = 20
         self.power = 5
+        self.name = "Player"
         self.lineofsight = 4
         self.armor = 0
         self.weapon = 0
         #set location
         self.rect = self.image.get_rect()
         self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
+    def weapup(self):
+        textset("You find a better weapon")
+        self.power = 10
+        self.weapon = 1
+    def armup(self):
+        textset("You find better armor")
+        self.maxhealth = 35
+        self.currenthealth = 35
+        self.armor=1        
+
     def attack(self,enemy):
         if enemy.name == "goblin":
             enemy.currenthealth-=self.power
@@ -187,6 +198,7 @@ class Goblin(pygame.sprite.Sprite):
     def attack(self,enemy):
         enemy.currenthealth-=self.power
     def update(self):
+        #updates goblin's current health in healthbar
         if self.currenthealth == self.maxhealth:
             goblinsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,16,2))
@@ -200,6 +212,11 @@ class Goblin(pygame.sprite.Sprite):
             goblinsprite(self)
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,4,2))
         else:
+            #goblin dead
+            if random.randint(1,15) == 15 and player.armor==0:
+                player.armup()
+            if random.randint(1,15) == 15 and player.weapon==0:
+                player.weapup()
             enemylocations.remove(self.loc)
             all_sprites.remove(self)
 
@@ -244,7 +261,22 @@ class Floorset(pygame.sprite.Sprite):
             else:
                 void(self)
 
-
+def floorcreation():
+    #deletes old floor
+    for sprite in all_sprites:
+        if sprite.name == "floor":
+            all_sprites.remove(sprite)
+        if sprite.name == "goblin":
+            all_sprites.remove(sprite)
+    #creates new floor sprites
+    for i in range(len(cfloor)):
+        for x in range(len(cfloor[i])):
+            floorsprite = Floorset([i,x])
+            all_sprites.add(floorsprite)
+    all_sprites.remove(player)
+    all_sprites.add(player)
+    player.loc = [2,2]
+    player.rect.center = [398+player.loc[0]*16,50+player.loc[1]*16]
 
 
 #initialize and create window
@@ -257,10 +289,7 @@ sb = Sideimg()
 all_sprites.add(sb)
 player = Player()
 #creates floor sprites
-for i in range(len(cfloor)):
-    for x in range(len(cfloor[i])):
-        floorsprite = Floorset([i,x])
-        all_sprites.add(floorsprite)
+floorcreation()
 #creates player
 all_sprites.add(player)
 
@@ -288,6 +317,16 @@ while running:
                     else:
                         player.loc = [player.loc[0]-1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]-16,player.rect.center[1]]
+                elif cfloor[player.loc[0]-1][player.loc[1]] == 7:
+                    if cfloor == floor1:
+                        cmons = floor2mons
+                        cfloor = floor2
+                        textset("You reach the second floor")
+                    elif cfloor == floor2:
+                        cmons = floor3mons 
+                        cfloor = floor3
+                        textset("You reach the final floor")
+                    floorcreation()
             if event.key == pygame.K_RIGHT:
                 if cfloor[player.loc[0]+1][player.loc[1]] == 0:
                     if [player.loc[0]+1,player.loc[1]] in enemylocations:
@@ -297,6 +336,16 @@ while running:
                     else:
                         player.loc = [player.loc[0]+1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
+                elif cfloor[player.loc[0]+1][player.loc[1]] == 7:
+                    if cfloor == floor1:
+                        cfloor = floor2
+                        cmons = floor2mons
+                        textset("You reach the second floor")
+                    elif cfloor == floor2:
+                        cfloor = floor3
+                        cmons = floor3mons 
+                        textset("You reach the final floor")
+                    floorcreation()
             if event.key == pygame.K_UP:
                 if cfloor[player.loc[0]][player.loc[1]-1] == 0:
                     if [player.loc[0],player.loc[1]-1] in enemylocations:
@@ -306,6 +355,16 @@ while running:
                     else:
                         player.loc = [player.loc[0],player.loc[1]-1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]-16]
+                elif cfloor[player.loc[0]][player.loc[1]-1] == 7:
+                    if cfloor == floor1:
+                        cfloor = floor2
+                        cmons = floor2mons
+                        textset("You reach the second floor")
+                    elif cfloor == floor2:
+                        cfloor = floor3
+                        cmons = floor3mons 
+                        textset("You reach the final floor")
+                    floorcreation()
             if event.key == pygame.K_DOWN:
                 if cfloor[player.loc[0]][player.loc[1]+1] == 0:
                     if [player.loc[0],player.loc[1]+1] in enemylocations:
@@ -315,7 +374,16 @@ while running:
                     else:
                         player.loc = [player.loc[0],player.loc[1]+1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]+16]
-    
+                elif cfloor[player.loc[0]][player.loc[1]+1] == 7:
+                    if cfloor == floor1:
+                        cfloor = floor2
+                        cmons = floor2mons
+                        textset("You reach the second floor")
+                    elif cfloor == floor2:
+                        cfloor = floor3
+                        cmons = floor3mons 
+                        textset("You reach the final floor")
+                    floorcreation()
     #Update
     all_sprites.update()
 
