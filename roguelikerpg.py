@@ -20,6 +20,10 @@ gturn = 0
 #font for texts
 pygame.font.init()
 font = pygame.font.Font(os.path.join(img_folder,"sunflower.otf"),16)
+gofont = pygame.font.Font(os.path.join(img_folder,"sunflower.otf"),50)
+gotext = gofont.render('Game Over', True, (255,255,255))
+gorect = gotext.get_rect()
+gorect.center = (WIDTH // 2, HEIGHT // 2)
 #log for text on screen
 textlog = []
 #enemy locations
@@ -493,12 +497,18 @@ while running:
                         cmons = floor3mons 
                         textset("You reach the final floor")
                     floorcreation()
+    
+    
     #Update
     all_sprites.update()
 
     #screen rendering
     screen.fill(BLACK)
     all_sprites.draw(screen)
+    if player.currenthealth <1:
+        screen.fill(BLACK)
+        display_surface = pygame.display.set_mode((WIDTH,HEIGHT )) 
+        display_surface.blit(gotext, gorect)
     pygame.display.flip()
 
 pygame.quit()
