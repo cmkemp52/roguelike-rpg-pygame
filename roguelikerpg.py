@@ -16,6 +16,7 @@ healthsheet = pygame.image.load(os.path.join(img_folder, 'redSheet.png'))
 WIDTH = 800
 HEIGHT = 600
 FPS = 30
+gturn = 0
 #font for texts
 pygame.font.init()
 font = pygame.font.Font(os.path.join(img_folder,"sunflower.otf"),16)
@@ -23,8 +24,8 @@ font = pygame.font.Font(os.path.join(img_folder,"sunflower.otf"),16)
 textlog = []
 #enemy locations
 enemylocations = []
-cfloor = floor2
-cmons = floor2mons
+cfloor = floor1
+cmons = floor1mons
 
 #Creating the side parchment with image/text
 class Sideimg(pygame.sprite.Sprite):
@@ -193,11 +194,71 @@ class Goblin(pygame.sprite.Sprite):
         self.name = "goblin"
         self.power = 3
         self.loc=locat
+        self.lturn = gturn
         self.rect = self.image.get_rect()
         self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
     def attack(self,enemy):
         enemy.currenthealth-=self.power
     def update(self):
+        #random movement
+        ranmove = random.randint(1,4)
+        while self.lturn < gturn:
+            if ranmove == 1:
+                if cfloor[self.loc[0]-1][self.loc[1]] == 0:
+                    #if spot has an enemy, attack it
+                    if [self.loc[0]-1,self.loc[1]] in enemylocations:
+                        ranmove +=1
+                    #else move into that spot
+                    else:
+                        enemylocations.remove(self.loc)
+                        self.loc = [self.loc[0]-1,self.loc[1]]
+                        enemylocations.append(self.loc)
+                        self.rect.center = [self.rect.center[0]-16,self.rect.center[1]]
+                else:
+                    ranmove+=1
+                self.lturn +=1
+            if ranmove == 2:
+                if cfloor[self.loc[0]+1][self.loc[1]] == 0:
+                    #if spot has an enemy, attack it
+                    if [self.loc[0]+1,self.loc[1]] in enemylocations:
+                        ranmove +=1
+                    #else move into that spot
+                    else:
+                        enemylocations.remove(self.loc)
+                        self.loc = [self.loc[0]+1,self.loc[1]]
+                        enemylocations.append(self.loc)
+                        self.rect.center = [self.rect.center[0]+16,self.rect.center[1]]
+                else:
+                    ranmove+=1
+                self.lturn +=1
+            if ranmove == 3:
+                if cfloor[self.loc[0]][self.loc[1]-1] == 0:
+                    #if spot has an enemy, attack it
+                    if [self.loc[0],self.loc[1]-1] in enemylocations:
+                        ranmove +=1
+                    #else move into that spot
+                    else:
+                        enemylocations.remove(self.loc)
+                        self.loc = [self.loc[0],self.loc[1]-1]
+                        enemylocations.append(self.loc)
+                        self.rect.center = [self.rect.center[0],self.rect.center[1]-16]
+                else:
+                    ranmove+=1
+                self.lturn +=1
+            if ranmove == 4:
+                if cfloor[self.loc[0]][self.loc[1]+1] == 0:
+                    #if spot has an enemy, attack it
+                    if [self.loc[0],self.loc[1]+1] in enemylocations:
+                        ranmove +=1
+                    #else move into that spot
+                    else:
+                        enemylocations.remove(self.loc)
+                        self.loc = [self.loc[0],self.loc[1]+1]
+                        enemylocations.append(self.loc)
+                        self.rect.center = [self.rect.center[0],self.rect.center[1]+16]
+                else:
+                    ranmove-=3
+                self.lturn +=1
         #updates goblin's current health in healthbar
         if self.currenthealth == self.maxhealth:
             goblinsprite(self)
@@ -308,6 +369,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
+            gturn +=1
             if event.key == pygame.K_LEFT:
                 #if spot is a floor
                 if cfloor[player.loc[0]-1][player.loc[1]] == 0:
