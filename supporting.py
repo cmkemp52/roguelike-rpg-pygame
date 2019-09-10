@@ -24,4 +24,6 @@ def wall(self):
 def void(self):
     self.image.fill(BLACK)
 
+def bright(self):
+    self.image.fill(WHITE)
 

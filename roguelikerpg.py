@@ -8,22 +8,103 @@ from supporting import *
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, 'img')
 charsheet = pygame.image.load(os.path.join(img_folder, 'characters.png'))
+parch = pygame.image.load(os.path.join(img_folder, 'parchment.png'))
+abe = pygame.image.load(os.path.join(img_folder, 'abe.png'))
+healthsheet = pygame.image.load(os.path.join(img_folder, 'redSheet.png'))
 
 
 #Parameters
 WIDTH = 800
-HEIGHT = 800
+HEIGHT = 600
 FPS = 30
+#font for texts
+pygame.font.init()
+font = pygame.font.Font(os.path.join(img_folder,"sunflower.otf"),16)
+#log for text on screen
+textlog = []
+#enemy locations
 enemylocations = []
 cfloor = floor1
 cmons = floor1mons
 
+#Creating the side parchment with image/text
+class Sideimg(pygame.sprite.Sprite):
+    def __init__(self):
+        #initializing
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((1000, 1200))
+        self.loc = [9999,9999]
+        self.name = "parchment"
+        #placement
+        self.rect = self.image.get_rect()
+        self.rect.center = [-50,0]
+    def update(self):
+        #clears old images
+        void(self)
+        #sets images
+        self.image.blit(parch, (0,0))
+        self.image.blit(abe, (580,630), (0,0,200,300))
+        #set text
+        nametext = font.render('Abraham Lincoln', True, (0,0,0))
+        titletext = font.render('President', True, (0,0,0))
+        buttext = font.render('But Also', True, (0,0,0))
+        slayertext = font.render('Slayer of Goblins', True, (0,0,0))
+        self.image.blit(nametext,(660,630))
+        self.image.blit(titletext,(670,650))
+        self.image.blit(buttext,(690,670))
+        self.image.blit(slayertext,(670,690))
+        #set health
+        Healthtext = font.render(f'Abe\'s health:   {player.currenthealth} / {player.maxhealth}', True, (0,0,0))
+        self.image.blit(Healthtext,(580,730))
+        
+        #set log
+        if len(textlog) >0:
+            in0text = font.render(textlog[0], True, (0,0,0))
+            self.image.blit(in0text,(580,780))
+        if len(textlog) >1:
+            in1text = font.render(textlog[1], True, (0,0,0))
+            self.image.blit(in1text,(580,805))
+        if len(textlog) >2:
+            in2text = font.render(textlog[2], True, (0,0,0))
+            self.image.blit(in2text,(580,830))
+        if len(textlog) >3:
+            in3text = font.render(textlog[3], True, (0,0,0))
+            self.image.blit(in3text,(580,855))
+        if len(textlog) >4:
+            in3text = font.render(textlog[4], True, (0,0,0))
+            self.image.blit(in3text,(580,880))
+        if len(textlog) >5:
+            in3text = font.render(textlog[5], True, (0,0,0))
+            self.image.blit(in3text,(580,905))
+        if len(textlog) >6:
+            in3text = font.render(textlog[6], True, (0,0,0))
+            self.image.blit(in3text,(580,930))
+        if len(textlog) >7:
+            in3text = font.render(textlog[7], True, (122, 118, 106))
+            self.image.blit(in3text,(580,955))
+        if len(textlog) >8:
+            in4text = font.render(textlog[8], True, (122, 118, 106))
+            self.image.blit(in4text,(580,980))
+        if len(textlog) >9:
+            in4text = font.render(textlog[9], True, (199, 193, 177))
+            self.image.blit(in4text,(580,1005))
+
+
+#function which sets text log
+def textset(txt):
+    if len(textlog) < 10:
+        textlog.insert(0,txt)
+    else:
+        textlog.insert(0,txt)
+        textlog.pop(10)
+
+#main character setup
 def charsprite(self):
+    #set back to black
+    void(self)
     #set background
     if cfloor[self.loc[0]][self.loc[1]] == 0:
-        dirt(self)
-    elif cfloor[self.loc[0]][self.loc[1]] == 1:
-        wall(self)
+        self.image.blit(spritesheet, (0,2), (x17(10),x17(8),16,16))
     #set character base model
     self.image.blit(charsheet, (0,2), (0,0,16,16))
     #set character armor
@@ -34,7 +115,7 @@ def charsprite(self):
     #set character pants
     self.image.blit(charsheet, (0,2), (x17(3),17,16,16))
     #set character hair
-    self.image.blit(charsheet, (0,2), (x17(26),0,16,16))
+    self.image.blit(charsheet, (0,2), (x17(22),0,16,16))
     #set character weapon
     if self.weapon == 0:
         self.image.blit(charsheet, (0,2), (x17(49),0,16,16))
@@ -56,9 +137,16 @@ class Player(pygame.sprite.Sprite):
         self.weapon = 0
         #set location
         self.rect = self.image.get_rect()
-        self.rect.center = [198+self.loc[0]*16,200+self.loc[1]*16]
+        self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
     def attack(self,enemy):
-        enemy.currenthealth-=self.power
+        if enemy.name == "goblin":
+            enemy.currenthealth-=self.power
+            quote=random.randint(1,10)
+            if(quote==5):
+                textset("I shall kill them all...")
+            if(quote==10):
+                textset("Die, you mutant greenbeans!")
+            textset(f"You do {self.power} damage!")
     def update(self):
         if self.currenthealth == self.maxhealth:
             charsprite(self)
@@ -74,10 +162,10 @@ class Player(pygame.sprite.Sprite):
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,4,2))
 
 def goblinsprite(self):
+    #set back to black
+    void(self)
     if cfloor[self.loc[0]][self.loc[1]] == 0:
-        dirt(self)
-    elif cfloor[self.loc[0]][self.loc[1]] == 1:
-        wall(self)
+        self.image.blit(spritesheet, (0,2), (x17(10),x17(8),16,16))
     self.image.blit(charsheet, (0,2), (0,x17(3),16,16))
 
 class Goblin(pygame.sprite.Sprite):
@@ -87,10 +175,11 @@ class Goblin(pygame.sprite.Sprite):
         self.image = pygame.Surface((16, 18))
         self.maxhealth = 6
         self.currenthealth = 6
+        self.name = "goblin"
         self.power = 3
         self.loc=locat
         self.rect = self.image.get_rect()
-        self.rect.center = [198+self.loc[0]*16,200+self.loc[1]*16]
+        self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
     def attack(self,enemy):
         enemy.currenthealth-=self.power
     def update(self):
@@ -117,13 +206,14 @@ class Floorset(pygame.sprite.Sprite):
     def __init__(self,locat):
         #initialize sprite
         self.currenthealth = 9999999
+        self.name = "floor"
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((16, 16))
         #floor location
         self.loc = locat
         #set floor sprite location
         self.rect = self.image.get_rect()
-        self.rect.center = [200+self.loc[0]*16,200+self.loc[1]*16]
+        self.rect.center = [400+self.loc[0]*16,50+self.loc[1]*16]
     def update(self):
         #generating vision list
         visible = []
@@ -146,6 +236,7 @@ class Floorset(pygame.sprite.Sprite):
                     goblin = Goblin(self.loc)
                     enemylocations.append(self.loc)
                     all_sprites.add(goblin)
+                    textset("A goblin appears!!")
             else:
                 void(self)
 
@@ -158,6 +249,8 @@ screen = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Roguelike RPG")
 clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
+sb = Sideimg()
+all_sprites.add(sb)
 player = Player()
 #creates floor sprites
 for i in range(len(cfloor)):
@@ -166,6 +259,7 @@ for i in range(len(cfloor)):
         all_sprites.add(floorsprite)
 #creates player
 all_sprites.add(player)
+
 
 
 
@@ -185,7 +279,7 @@ while running:
                 if cfloor[player.loc[0]-1][player.loc[1]] == 0:
                     if [player.loc[0]-1,player.loc[1]] in enemylocations:
                         for goblin in all_sprites:
-                            if goblin.loc == [player.loc[0]-1,player.loc[1]]:
+                            if goblin.loc == [player.loc[0]-1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
                     else:
                         player.loc = [player.loc[0]-1,player.loc[1]]
@@ -194,7 +288,7 @@ while running:
                 if cfloor[player.loc[0]+1][player.loc[1]] == 0:
                     if [player.loc[0]+1,player.loc[1]] in enemylocations:
                         for goblin in all_sprites:
-                            if goblin.loc == [player.loc[0]+1,player.loc[1]]:
+                            if goblin.loc == [player.loc[0]+1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
                     else:
                         player.loc = [player.loc[0]+1,player.loc[1]]
@@ -203,7 +297,7 @@ while running:
                 if cfloor[player.loc[0]][player.loc[1]-1] == 0:
                     if [player.loc[0],player.loc[1]-1] in enemylocations:
                         for goblin in all_sprites:
-                            if goblin.loc == [player.loc[0],player.loc[1]-1]:
+                            if goblin.loc == [player.loc[0],player.loc[1]-1] and goblin.name == "goblin":
                                 player.attack(goblin)
                     else:
                         player.loc = [player.loc[0],player.loc[1]-1]
@@ -212,7 +306,7 @@ while running:
                 if cfloor[player.loc[0]][player.loc[1]+1] == 0:
                     if [player.loc[0],player.loc[1]+1] in enemylocations:
                         for goblin in all_sprites:
-                            if goblin.loc == [player.loc[0],player.loc[1]+1]:
+                            if goblin.loc == [player.loc[0],player.loc[1]+1] and goblin.name == "goblin":
                                 player.attack(goblin)
                     else:
                         player.loc = [player.loc[0],player.loc[1]+1]
