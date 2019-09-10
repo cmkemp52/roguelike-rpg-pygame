@@ -12,7 +12,6 @@ parch = pygame.image.load(os.path.join(img_folder, 'parchment.png'))
 abe = pygame.image.load(os.path.join(img_folder, 'abe.png'))
 healthsheet = pygame.image.load(os.path.join(img_folder, 'redSheet.png'))
 
-
 #Parameters
 WIDTH = 800
 HEIGHT = 600
@@ -104,7 +103,11 @@ def charsprite(self):
     void(self)
     #set background
     if cfloor[self.loc[0]][self.loc[1]] == 0:
-        self.image.blit(spritesheet, (0,2), (x17(10),x17(8),16,16))
+        dirt(self)
+    elif cfloor[self.loc[0]][self.loc[1]] == 1:
+        wall(self)
+    elif cfloor[self.door[0]][self.loc[1]] == 7:
+        doors(self)
     #set character base model
     self.image.blit(charsheet, (0,2), (0,0,16,16))
     #set character armor
@@ -121,6 +124,7 @@ def charsprite(self):
         self.image.blit(charsheet, (0,2), (x17(49),0,16,16))
     elif self.weapon == 1:
         self.image.blit(charsheet, (0,2), (x17(51),x17(9),16,16))
+    
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         #initialize sprite
@@ -200,8 +204,6 @@ class Goblin(pygame.sprite.Sprite):
             all_sprites.remove(self)
 
 
-
-
 class Floorset(pygame.sprite.Sprite):
     def __init__(self,locat):
         #initialize sprite
@@ -231,6 +233,8 @@ class Floorset(pygame.sprite.Sprite):
                     wall(self)
                 elif cfloor[self.loc[0]][self.loc[1]] == 9:
                     void(self)
+                elif cfloor[self.loc[0]][self.loc[1]] == 7:
+                    doors(self)
                 if self.loc in cmons:
                     cmons.remove(self.loc)
                     goblin = Goblin(self.loc)
