@@ -197,16 +197,58 @@ class Goblin(pygame.sprite.Sprite):
         self.lturn = gturn
         self.rect = self.image.get_rect()
         self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
-    def attack(self,enemy):
-        enemy.currenthealth-=self.power
+    def attack(self):
+        player.currenthealth-=self.power
+        textset(f"Goblin hits you for {self.power}")
     def update(self):
         #random movement
         ranmove = random.randint(1,4)
         while self.lturn < gturn:
-            if ranmove == 1:
+            playercord = [[player.loc[0],player.loc[1]-1],[player.loc[0],player.loc[1]+1],[player.loc[0]-1,player.loc[1]],[player.loc[0]+1,player.loc[1]]]
+            if [self.loc[0]-1,self.loc[1]] in playercord:
+                if [self.loc[0]-1,self.loc[1]] in enemylocations:
+                    self.lturn+=1
+                    break
+                else:
+                    enemylocations.remove(self.loc)
+                    self.loc = [self.loc[0]-1,self.loc[1]]
+                    enemylocations.append(self.loc)
+                    self.rect.center = [self.rect.center[0]-16,self.rect.center[1]]
+                    self.attack()
+            elif [self.loc[0]+1,self.loc[1]] in playercord:
+                if [self.loc[0]+1,self.loc[1]] in enemylocations:
+                    self.lturn+=1
+                    break
+                else:
+                    enemylocations.remove(self.loc)
+                    self.loc = [self.loc[0]+1,self.loc[1]]
+                    enemylocations.append(self.loc)
+                    self.rect.center = [self.rect.center[0]+16,self.rect.center[1]]
+                    self.attack()
+            elif [self.loc[0],self.loc[1]+1] in playercord:
+                if [self.loc[0],self.loc[1]+1] in enemylocations:
+                    self.lturn+=1
+                    break
+                else:
+                    enemylocations.remove(self.loc)
+                    self.loc = [self.loc[0],self.loc[1]+1]
+                    enemylocations.append(self.loc)
+                    self.rect.center = [self.rect.center[0],self.rect.center[1]+16]
+                    self.attack()
+            elif [self.loc[0],self.loc[1]-1] in playercord:
+                if [self.loc[0],self.loc[1]-1] in enemylocations:
+                    self.lturn+=1
+                    break
+                else:
+                    enemylocations.remove(self.loc)
+                    self.loc = [self.loc[0],self.loc[1]-1]
+                    enemylocations.append(self.loc)
+                    self.rect.center = [self.rect.center[0],self.rect.center[1]-16]
+                    self.attack()
+            elif ranmove == 1:
                 if cfloor[self.loc[0]-1][self.loc[1]] == 0:
                     #if spot has an enemy, attack it
-                    if [self.loc[0]-1,self.loc[1]] in enemylocations:
+                    if [self.loc[0]-1,self.loc[1]] in enemylocations or [self.loc[0]-1,self.loc[1]]==player.loc:
                         ranmove +=1
                     #else move into that spot
                     else:
@@ -217,10 +259,10 @@ class Goblin(pygame.sprite.Sprite):
                 else:
                     ranmove+=1
                 self.lturn +=1
-            if ranmove == 2:
+            elif ranmove == 2:
                 if cfloor[self.loc[0]+1][self.loc[1]] == 0:
                     #if spot has an enemy, attack it
-                    if [self.loc[0]+1,self.loc[1]] in enemylocations:
+                    if [self.loc[0]+1,self.loc[1]] in enemylocations or [self.loc[0]+1,self.loc[1]] == player.loc:
                         ranmove +=1
                     #else move into that spot
                     else:
@@ -231,10 +273,10 @@ class Goblin(pygame.sprite.Sprite):
                 else:
                     ranmove+=1
                 self.lturn +=1
-            if ranmove == 3:
+            elif ranmove == 3:
                 if cfloor[self.loc[0]][self.loc[1]-1] == 0:
                     #if spot has an enemy, attack it
-                    if [self.loc[0],self.loc[1]-1] in enemylocations:
+                    if [self.loc[0],self.loc[1]-1] in enemylocations or [self.loc[0],self.loc[1]-1] == player.loc:
                         ranmove +=1
                     #else move into that spot
                     else:
@@ -245,10 +287,10 @@ class Goblin(pygame.sprite.Sprite):
                 else:
                     ranmove+=1
                 self.lturn +=1
-            if ranmove == 4:
+            elif ranmove == 4:
                 if cfloor[self.loc[0]][self.loc[1]+1] == 0:
                     #if spot has an enemy, attack it
-                    if [self.loc[0],self.loc[1]+1] in enemylocations:
+                    if [self.loc[0],self.loc[1]+1] in enemylocations or [self.loc[0],self.loc[1]+1] == player.loc:
                         ranmove +=1
                     #else move into that spot
                     else:
@@ -278,6 +320,7 @@ class Goblin(pygame.sprite.Sprite):
                 player.armup()
             if random.randint(1,15) == 15 and player.weapon==0:
                 player.weapup()
+            textset("You kill the goblin!")
             enemylocations.remove(self.loc)
             all_sprites.remove(self)
 
