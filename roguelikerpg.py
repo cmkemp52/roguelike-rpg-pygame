@@ -9,7 +9,6 @@ game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, 'img')
 charsheet = pygame.image.load(os.path.join(img_folder, 'characters.png'))
 
-
 #Parameters
 WIDTH = 800
 HEIGHT = 800
@@ -24,6 +23,8 @@ def charsprite(self):
         dirt(self)
     elif cfloor[self.loc[0]][self.loc[1]] == 1:
         wall(self)
+    elif cfloor[self.door[0]][self.loc[1]] == 7:
+        doors(self)
     #set character base model
     self.image.blit(charsheet, (0,2), (0,0,16,16))
     #set character armor
@@ -40,6 +41,7 @@ def charsprite(self):
         self.image.blit(charsheet, (0,2), (x17(49),0,16,16))
     elif self.weapon == 1:
         self.image.blit(charsheet, (0,2), (x17(51),x17(9),16,16))
+    
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         #initialize sprite
@@ -139,6 +141,8 @@ class Floorset(pygame.sprite.Sprite):
                     wall(self)
                 elif cfloor[self.loc[0]][self.loc[1]] == 9:
                     void(self)
+                elif cfloor[self.loc[0]][self.loc[1]] == 7:
+                    doors(self)
                 if self.loc in cmons:
                     cmons.remove(self.loc)
                     goblin = Goblin(self.loc)
