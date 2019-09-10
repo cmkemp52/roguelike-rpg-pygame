@@ -23,8 +23,8 @@ font = pygame.font.Font(os.path.join(img_folder,"sunflower.otf"),16)
 textlog = []
 #enemy locations
 enemylocations = []
-cfloor = floor1
-cmons = floor1mons
+cfloor = floor2
+cmons = floor2mons
 
 #Creating the side parchment with image/text
 class Sideimg(pygame.sprite.Sprite):
