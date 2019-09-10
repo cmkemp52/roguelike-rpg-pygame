@@ -309,14 +309,18 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
+                #if spot is a floor
                 if cfloor[player.loc[0]-1][player.loc[1]] == 0:
+                    #if spot has an enemy, attack it
                     if [player.loc[0]-1,player.loc[1]] in enemylocations:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]-1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
+                    #else move into that spot
                     else:
                         player.loc = [player.loc[0]-1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]-16,player.rect.center[1]]
+                #if floor is a door, go to next floor
                 elif cfloor[player.loc[0]-1][player.loc[1]] == 7:
                     if cfloor == floor1:
                         cmons = floor2mons
