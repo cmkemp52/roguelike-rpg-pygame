@@ -48,8 +48,8 @@ class Player(pygame.sprite.Sprite):
         #set character location
         self.loc = [2,2]
         #set character stats
-        self.maxhealth = 20
-        self.currenthealth = 20
+        self.maxhealth = 1
+        self.currenthealth = 1
         self.power = 5
         self.lineofsight = 4
         self.armor = 0
@@ -85,9 +85,9 @@ class Goblin(pygame.sprite.Sprite):
         #initialize sprite
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((16, 18))
-        self.maxhealth = 6
-        self.currenthealth = 6
-        self.power = 3
+        self.maxhealth = 30
+        self.currenthealth = 30
+        self.power = 5
         self.loc=locat
         self.rect = self.image.get_rect()
         self.rect.center = [198+self.loc[0]*16,200+self.loc[1]*16]
@@ -109,8 +109,6 @@ class Goblin(pygame.sprite.Sprite):
         else:
             enemylocations.remove(self.loc)
             all_sprites.remove(self)
-
-
 
 
 class Floorset(pygame.sprite.Sprite):
@@ -166,9 +164,6 @@ for i in range(len(cfloor)):
         all_sprites.add(floorsprite)
 #creates player
 all_sprites.add(player)
-
-
-
 #the GAME
 running = True
 while running:
@@ -186,6 +181,7 @@ while running:
                     if [player.loc[0]-1,player.loc[1]] in enemylocations:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]-1,player.loc[1]]:
+                                #goblin.attack(player) is giving the: errorAttributeError: 'Floorset' object has no attribute 'attack'
                                 player.attack(goblin)
                     else:
                         player.loc = [player.loc[0]-1,player.loc[1]]
@@ -195,6 +191,7 @@ while running:
                     if [player.loc[0]+1,player.loc[1]] in enemylocations:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]+1,player.loc[1]]:
+                                #goblin.attack(player) is giving the: errorAttributeError: 'Floorset' object has no attribute 'attack'
                                 player.attack(goblin)
                     else:
                         player.loc = [player.loc[0]+1,player.loc[1]]
@@ -204,6 +201,7 @@ while running:
                     if [player.loc[0],player.loc[1]-1] in enemylocations:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0],player.loc[1]-1]:
+                                #goblin.attack(player) is giving the: errorAttributeError: 'Floorset' object has no attribute 'attack'
                                 player.attack(goblin)
                     else:
                         player.loc = [player.loc[0],player.loc[1]-1]
@@ -213,6 +211,7 @@ while running:
                     if [player.loc[0],player.loc[1]+1] in enemylocations:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0],player.loc[1]+1]:
+                                #goblin.attack(player) is giving the: errorAttributeError: 'Floorset' object has no attribute 'attack'
                                 player.attack(goblin)
                     else:
                         player.loc = [player.loc[0],player.loc[1]+1]
