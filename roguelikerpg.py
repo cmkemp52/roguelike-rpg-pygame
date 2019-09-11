@@ -11,7 +11,11 @@ charsheet = pygame.image.load(os.path.join(img_folder, 'characters.png'))
 parch = pygame.image.load(os.path.join(img_folder, 'parchment.png'))
 abe = pygame.image.load(os.path.join(img_folder, 'abe.png'))
 healthsheet = pygame.image.load(os.path.join(img_folder, 'redSheet.png'))
-
+pygame.mixer.pre_init(22050, -16, 2, 1024)
+pygame.init()
+pygame.mixer.quit()
+pygame.mixer.init(22050, -16, 2, 1024)
+soundeffect = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
 #Parameters
 WIDTH = 800
 HEIGHT = 600
@@ -435,6 +439,9 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]-1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
+                                soundeffect.play(loops=0, maxtime=1, fade_ms=90)
+                                
+
                     #else move into that spot
                     else:
                         player.loc = [player.loc[0]-1,player.loc[1]]
@@ -456,6 +463,9 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]+1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
+                                soundeffect.play(0)
+
+                                
                     else:
                         player.loc = [player.loc[0]+1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
@@ -475,6 +485,9 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0],player.loc[1]-1] and goblin.name == "goblin":
                                 player.attack(goblin)
+                                soundeffect.play(0)
+
+                                
                     else:
                         player.loc = [player.loc[0],player.loc[1]-1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]-16]
@@ -494,6 +507,9 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0],player.loc[1]+1] and goblin.name == "goblin":
                                 player.attack(goblin)
+                                soundeffect.play(0)
+
+                                
                     else:
                         player.loc = [player.loc[0],player.loc[1]+1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]+16]
