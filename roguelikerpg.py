@@ -13,7 +13,7 @@ abe = pygame.image.load(os.path.join(img_folder, 'abe.png'))
 healthsheet = pygame.image.load(os.path.join(img_folder, 'redSheet.png'))
 pygame.mixer.pre_init(22050, -16, 2, 1024)
 pygame.init()
-soundeff = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
+soundeffect = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
 song = pygame.mixer.music.load(os.path.join(img_folder, "game song.mp3"))
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(.3)
@@ -42,8 +42,9 @@ cmons = floor1mons
 bosscord = [[18, 13]]
 youwin = 0
 
+itemlocations = []
 
-class item(pygame.sprite.Sprite):
+class Item(pygame.sprite.Sprite):
     def __init__(self):
         #initializing
         pygame.sprite.Sprite.__init__(self)
@@ -153,6 +154,8 @@ def charsprite(self):
         self.image.blit(charsheet, (0,2), (x17(10),0,16,16))
     elif self.armor == 1:
         self.image.blit(charsheet, (0,2), (x17(16),17,16,16))
+    elif self.armor == 2:
+        self.image.blit(charsheet, (0,2), (x17(7),0,16,16))
     #set character pants
     self.image.blit(charsheet, (0,2), (x17(3),17,16,16))
     #set character hair
@@ -162,6 +165,8 @@ def charsprite(self):
         self.image.blit(charsheet, (0,2), (x17(49),0,16,16))
     elif self.weapon == 1:
         self.image.blit(charsheet, (0,2), (x17(51),x17(9),16,16))
+    elif self.weapon == 2:
+        self.image.blit(charsheet, (0,2), (x17(51),x17(7),16,16))
     
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -171,8 +176,8 @@ class Player(pygame.sprite.Sprite):
         #set character location
         self.loc = [2,2]
         #set character stats
-        self.maxhealth = 20
-        self.currenthealth = 20
+        self.maxhealth = 30
+        self.currenthealth = 30
         self.power = 5
         self.name = "Player"
         self.lineofsight = 4
@@ -183,13 +188,24 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
     def weapup(self):
         textset("You find a better weapon")
-        self.power = 10
-        self.weapon = 1
+        self.weapon+=1
+        if self.weapon == 1:
+            self.power = 10
+            self.weapon = 1
+        if self.weapon == 2:
+            self.power = 15
+            self.weapon = 2
+
     def armup(self):
         textset("You find better armor")
-        self.maxhealth = 35
-        self.currenthealth = 35
-        self.armor=1        
+        self.armor+=1
+        if self.armor == 1:
+            self.maxhealth = 45
+            self.currenthealth = 45
+        if self.armor == 2:   
+            self.maxhealth = 60
+            self.currenthealth = 60
+
 
     def attack(self,enemy):
         if enemy.name == "goblin":
@@ -266,13 +282,13 @@ class Goblin(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
         if cfloor == floor2:
-            self.power = 6
+            self.power = 3
+            self.maxhealth = 12
+            self.currenthealth = 12
+        if cfloor == floor3:
+            self.power = 5
             self.maxhealth = 15
             self.currenthealth = 15
-        if cfloor == floor3:
-            self.power = 9
-            self.maxhealth = 25
-            self.currenthealth = 25 
     def attack(self,enemy):
             enemy.currenthealth-=self.power
         
@@ -534,6 +550,11 @@ class Floorset(pygame.sprite.Sprite):
                     all_sprites.add(bossgoblin)
                     enemylocations.append(self.loc)
                     textset("You find the goblin leader!")
+                if self.loc in cfloor == floor1:
+                    item.remove(self.loc)
+                    item = Item(self.loc)
+                    all_sprites.add(item)
+                    itemlocations.append(self.loc)
             else:
                 void(self)
 
@@ -564,7 +585,7 @@ all_sprites = pygame.sprite.Group()
 sb = Sideimg()
 all_sprites.add(sb)
 player = Player()
-item = item()
+item = Item()
 all_sprites.add(item)
 #creates floor sprites
 floorcreation()
@@ -595,8 +616,8 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]-1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
+                                soundeffect.play(0)
                                 
-
                     #else move into that spot
                     else:
                         player.loc = [player.loc[0]-1,player.loc[1]]
@@ -619,6 +640,7 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]+1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
+                                soundeffect.play(0)
                     else:
                         player.loc = [player.loc[0]+1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
@@ -660,8 +682,7 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0],player.loc[1]+1] and goblin.name == "goblin":
                                 player.attack(goblin)
-
-                                
+                                soundeffect.play(0)       
                     else:
                         player.loc = [player.loc[0],player.loc[1]+1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]+16]
