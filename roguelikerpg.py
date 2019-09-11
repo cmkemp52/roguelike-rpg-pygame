@@ -391,9 +391,9 @@ class Goblin(pygame.sprite.Sprite):
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,4,2))
         else:
             #goblin dead
-            if random.randint(1,15) == 15 and player.armor==0:
+            if random.randint(1,10) == 10 and player.armor==0:
                 player.armup()
-            if random.randint(1,15) == 15 and player.weapon==0:
+            if random.randint(1,10) == 10 and player.weapon==0:
                 player.weapup()
             textset("You kill the goblin!")
             enemylocations.remove(self.loc)
