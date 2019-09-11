@@ -15,6 +15,7 @@ pygame.mixer.pre_init(22050, -16, 2, 1024)
 pygame.init()
 soundeff = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
 song = pygame.mixer.music.load(os.path.join(img_folder, "game song.mp3"))
+doorsound = pygame.mixer.Sound(os.path.join(img_folder, "Door sound.wav"))
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(.3)
 
@@ -601,12 +602,14 @@ while running:
                         player.rect.center = [player.rect.center[0]-16,player.rect.center[1]]
                 #if floor is a door, go to next floor
                 elif cfloor[player.loc[0]-1][player.loc[1]] == 7:
+                    doorsound.play()
                     if cfloor == floor1:
                         cfloor = floor2
                         cmons = floor2mons
                         textset("You reach the second floor")
                         textset("Goblins are stronger!")
                     elif cfloor == floor2:
+                        doorsound.play()
                         cmons = floor3mons 
                         cfloor = floor3
                         textset("You reach the final floor")
