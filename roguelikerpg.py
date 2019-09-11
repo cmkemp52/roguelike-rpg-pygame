@@ -16,7 +16,7 @@ pygame.init()
 soundeff = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
 song = pygame.mixer.music.load(os.path.join(img_folder, "game song.mp3"))
 doorsound = pygame.mixer.Sound(os.path.join(img_folder, "doorsound.ogg"))
-armorsound = doorsound = pygame.mixer.Sound(os.path.join(img_folder, "armor.ogg"))
+armorsound = pygame.mixer.Sound(os.path.join(img_folder, "armor.ogg"))
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(.3)
 
@@ -144,7 +144,7 @@ def charsprite(self):
     void(self)
     #set background
     if cfloor[self.loc[0]][self.loc[1]] == 0:
-        dirt(self)
+        self.image.blit(spritesheet, (0,2), (x17(10),x17(8),16,16))
     elif cfloor[self.loc[0]][self.loc[1]] == 1:
         wall(self)
     elif cfloor[self.door[0]][self.loc[1]] == 7:
@@ -199,6 +199,7 @@ class Player(pygame.sprite.Sprite):
             self.weapon = 2
 
     def armup(self):
+        armorsound.play()
         textset("You find better armor")
         self.armor+=1
         if self.armor == 1:
@@ -392,9 +393,9 @@ class Goblin(pygame.sprite.Sprite):
             self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,4,2))
         else:
             #goblin dead
-            if random.randint(1,10) == 10 and player.armor==0:
+            if random.randint(1,10) == 10 and player.armor <2:
                 player.armup()
-            if random.randint(1,10) == 10 and player.weapon==0:
+            if random.randint(1,10) == 10 and player.weapon <2:
                 player.weapup()
             textset("You kill the goblin!")
             enemylocations.remove(self.loc)
