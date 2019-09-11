@@ -28,12 +28,18 @@ gofont = pygame.font.Font(os.path.join(img_folder,"sunflower.otf"),50)
 gotext = gofont.render('Game Over', True, (255,255,255))
 gorect = gotext.get_rect()
 gorect.center = (WIDTH // 2, HEIGHT // 2)
+ywtext = gofont.render('You WIN!!!', True, (255,255,255))
+ywrect = ywtext.get_rect()
+ywrect.center = (WIDTH // 2, HEIGHT // 2)
 #log for text on screen
 textlog = []
 #enemy locations
 enemylocations = []
 cfloor = floor1
 cmons = floor1mons
+bosscord = [[18, 13]]
+youwin = 0
+
 
 #Creating the side parchment with image/text
 class Sideimg(pygame.sprite.Sprite):
@@ -342,7 +348,115 @@ class Goblin(pygame.sprite.Sprite):
             enemylocations.remove(self.loc)
             all_sprites.remove(self)
 
+class BossGoblin(pygame.sprite.Sprite):
+    def __init__(self, locat):
+        #initialize sprite
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((16, 18))
+        self.maxhealth = 20
+        self.currenthealth = 20
+        self.name = "goblin"
+        self.power = 5
+        self.loc=locat
+        self.lturn = gturn
+        self.rect = self.image.get_rect()
+        self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
+    def update(self):
+        while self.lturn < gturn:
+            ranmove = random.randint(1,4)
+            #chase after player
+            if gobattack(self,player):
+                textset(f"Boss Goblin hits you for {self.power}")
+            elif checkLeft(self,player):
+                if cfloor[self.loc[0]][self.loc[1]-1] == 0 and [self.loc[0],self.loc[1]-1] not in enemylocations:
+                    enemylocations.remove(self.loc)
+                    self.loc = [self.loc[0],self.loc[1]-1]
+                    enemylocations.append(self.loc)
+                    self.rect.center = [self.rect.center[0],self.rect.center[1]-16]
+            elif checkRight(self,player):
+                if cfloor[self.loc[0]][self.loc[1]+1] == 0 and [self.loc[0],self.loc[1]+1] not in enemylocations:
+                    enemylocations.remove(self.loc)
+                    self.loc = [self.loc[0],self.loc[1]+1]
+                    enemylocations.append(self.loc)
+                    self.rect.center = [self.rect.center[0],self.rect.center[1]+16]
+            elif checkUp(self,player):
+                if cfloor[self.loc[0]+1][self.loc[1]] == 0 and [self.loc[0]+1,self.loc[1]] not in enemylocations:
+                    enemylocations.remove(self.loc)
+                    self.loc = [self.loc[0]+1,self.loc[1]]
+                    enemylocations.append(self.loc)
+                    self.rect.center = [self.rect.center[0]+16,self.rect.center[1]]
+            elif checkDown(self,player):
+                if cfloor[self.loc[0]-1][self.loc[1]] == 0 and [self.loc[0]-1,self.loc[1]] not in enemylocations:
+                    enemylocations.remove(self.loc)
+                    self.loc = [self.loc[0]-1,self.loc[1]]
+                    enemylocations.append(self.loc)
+                    self.rect.center = [self.rect.center[0]-16,self.rect.center[1]]
+            elif ranmove == 1:
+                if cfloor[self.loc[0]-1][self.loc[1]] == 0:
+                    if [self.loc[0]-1,self.loc[1]] in enemylocations or [self.loc[0]-1,self.loc[1]]==player.loc:
+                        ranmove +=1
+                    else:
+                        enemylocations.remove(self.loc)
+                        self.loc = [self.loc[0]-1,self.loc[1]]
+                        enemylocations.append(self.loc)
+                        self.rect.center = [self.rect.center[0]-16,self.rect.center[1]]
+                else:
+                    ranmove+=1
+            elif ranmove == 2:
+                if cfloor[self.loc[0]+1][self.loc[1]] == 0:
+                    if [self.loc[0]+1,self.loc[1]] in enemylocations or [self.loc[0]+1,self.loc[1]] == player.loc:
+                        ranmove +=1
+                    else:
+                        enemylocations.remove(self.loc)
+                        self.loc = [self.loc[0]+1,self.loc[1]]
+                        enemylocations.append(self.loc)
+                        self.rect.center = [self.rect.center[0]+16,self.rect.center[1]]
+                else:
+                    ranmove+=1
+            elif ranmove == 3:
+                if cfloor[self.loc[0]][self.loc[1]-1] == 0:
+                    if [self.loc[0],self.loc[1]-1] in enemylocations or [self.loc[0],self.loc[1]-1] == player.loc:
+                        ranmove +=1
+                    else:
+                        enemylocations.remove(self.loc)
+                        self.loc = [self.loc[0],self.loc[1]-1]
+                        enemylocations.append(self.loc)
+                        self.rect.center = [self.rect.center[0],self.rect.center[1]-16]
+                else:
+                    ranmove+=1
+            elif ranmove == 4:
+                if cfloor[self.loc[0]][self.loc[1]+1] == 0:
+                    if [self.loc[0],self.loc[1]+1] in enemylocations or [self.loc[0],self.loc[1]+1] == player.loc:
+                        ranmove +=1
+                    else:
+                        enemylocations.remove(self.loc)
+                        self.loc = [self.loc[0],self.loc[1]+1]
+                        enemylocations.append(self.loc)
+                        self.rect.center = [self.rect.center[0],self.rect.center[1]+16]
+                else:
+                    ranmove-=3
+            self.lturn +=1
+        #updates goblin's current health in healthbar
+        void(self)
+        self.image.blit(spritesheet, (0,2), (x17(10),x17(8),16,16))
+        self.image.blit(charsheet, (0,2), (0,x17(3),16,16))
+        self.image.blit(charsheet, (0,2), (x17(8),17,16,16))
+        self.image.blit(charsheet, (0,2), (x17(43),x17(9),16,16))
+        if self.currenthealth == self.maxhealth:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,16,2))
+        elif self.currenthealth > self.maxhealth/2:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,12,2))
+        elif self.currenthealth > (self.maxhealth/2)/2:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,8,2))
+        elif self.currenthealth > 0:
+            self.image.blit(spritesheet, (0,0), (x17(6),x17(12)+5,4,2))
+        else:
+            #goblin dead
+            player.currenthealth = -50324
+            all_sprites.remove(self)
 
+
+bossspawn = False
 class Floorset(pygame.sprite.Sprite):
     def __init__(self,locat):
         #initialize sprite
@@ -380,6 +494,12 @@ class Floorset(pygame.sprite.Sprite):
                     enemylocations.append(self.loc)
                     all_sprites.add(goblin)
                     textset("A goblin appears!!")
+                if self.loc in bosscord and cfloor == floor3:
+                    bosscord.remove(self.loc)
+                    bossgoblin = BossGoblin(self.loc)
+                    all_sprites.add(bossgoblin)
+                    enemylocations.append(self.loc)
+                    textset("You find the goblin leader!")
             else:
                 void(self)
 
@@ -464,8 +584,6 @@ while running:
                             if goblin.loc == [player.loc[0]+1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
                                 soundeffect.play(0)
-
-                                
                     else:
                         player.loc = [player.loc[0]+1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
@@ -486,8 +604,6 @@ while running:
                             if goblin.loc == [player.loc[0],player.loc[1]-1] and goblin.name == "goblin":
                                 player.attack(goblin)
                                 soundeffect.play(0)
-
-                                
                     else:
                         player.loc = [player.loc[0],player.loc[1]-1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]-16]
@@ -531,7 +647,11 @@ while running:
     #screen rendering
     screen.fill(BLACK)
     all_sprites.draw(screen)
-    if player.currenthealth <1:
+    if player.currenthealth == -50324:
+        screen.fill(BLACK)
+        display_surface = pygame.display.set_mode((WIDTH,HEIGHT )) 
+        display_surface.blit(ywtext, ywrect)
+    elif player.currenthealth <1:
         screen.fill(BLACK)
         display_surface = pygame.display.set_mode((WIDTH,HEIGHT )) 
         display_surface.blit(gotext, gorect)
