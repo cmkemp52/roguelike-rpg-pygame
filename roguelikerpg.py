@@ -11,7 +11,6 @@ charsheet = pygame.image.load(os.path.join(img_folder, 'characters.png'))
 parch = pygame.image.load(os.path.join(img_folder, 'parchment.png'))
 abe = pygame.image.load(os.path.join(img_folder, 'abe.png'))
 healthsheet = pygame.image.load(os.path.join(img_folder, 'redSheet.png'))
-
 #Parameters
 WIDTH = 800
 HEIGHT = 600
@@ -26,6 +25,27 @@ textlog = []
 enemylocations = []
 cfloor = floor1
 cmons = floor1mons
+
+class item(pygame.sprite.Sprite):
+    def __init__(self):
+        #initializing
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((16, 18))
+        self.loc = [2, 4]
+        self.name = 'healthpack'
+        self.rect = self.image.get_rect()
+        self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
+        #set background
+        if cfloor[self.loc[0]][self.loc[1]] == 0:
+            dirt(self)
+        elif cfloor[self.loc[0]][self.loc[1]] == 1:
+            wall(self)
+        elif cfloor[self.door[0]][self.loc[1]] == 7:
+            doors(self)
+        self.image.blit(healthsheet, (0,2), (379,109,14,14))
+        #set back to black
+        void(self)
+        
 
 #Creating the side parchment with image/text
 class Sideimg(pygame.sprite.Sprite):
@@ -197,8 +217,17 @@ class Goblin(pygame.sprite.Sprite):
         self.lturn = gturn
         self.rect = self.image.get_rect()
         self.rect.center = [398+self.loc[0]*16,50+self.loc[1]*16]
+        if cfloor == floor2:
+            self.power = 6
+            self.maxhealth = 15
+            self.currenthealth = 15
+        if cfloor == floor3:
+            self.power = 9
+            self.maxhealth = 25
+            self.currenthealth = 25 
     def attack(self,enemy):
-        enemy.currenthealth-=self.power
+            enemy.currenthealth-=self.power
+        
     def update(self):
         #random movement
         ranmove = random.randint(1,4)
@@ -281,7 +310,6 @@ class Goblin(pygame.sprite.Sprite):
             enemylocations.remove(self.loc)
             all_sprites.remove(self)
 
-
 class Floorset(pygame.sprite.Sprite):
     def __init__(self,locat):
         #initialize sprite
@@ -349,6 +377,8 @@ all_sprites = pygame.sprite.Group()
 sb = Sideimg()
 all_sprites.add(sb)
 player = Player()
+item = item()
+all_sprites.add(item)
 #creates floor sprites
 floorcreation()
 #creates player
@@ -385,9 +415,10 @@ while running:
                 #if floor is a door, go to next floor
                 elif cfloor[player.loc[0]-1][player.loc[1]] == 7:
                     if cfloor == floor1:
-                        cmons = floor2mons
                         cfloor = floor2
+                        cmons = floor2mons
                         textset("You reach the second floor")
+                        textset("Goblins are stronger!")
                     elif cfloor == floor2:
                         cmons = floor3mons 
                         cfloor = floor3
@@ -407,6 +438,7 @@ while running:
                         cfloor = floor2
                         cmons = floor2mons
                         textset("You reach the second floor")
+                        textset("Goblins are stronger!")
                     elif cfloor == floor2:
                         cfloor = floor3
                         cmons = floor3mons 
@@ -426,6 +458,7 @@ while running:
                         cfloor = floor2
                         cmons = floor2mons
                         textset("You reach the second floor")
+                        textset("Goblins are stronger!")
                     elif cfloor == floor2:
                         cfloor = floor3
                         cmons = floor3mons 
@@ -445,6 +478,7 @@ while running:
                         cfloor = floor2
                         cmons = floor2mons
                         textset("You reach the second floor")
+                        textset("Goblins are stronger!")
                     elif cfloor == floor2:
                         cfloor = floor3
                         cmons = floor3mons 
