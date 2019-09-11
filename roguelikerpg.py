@@ -630,7 +630,6 @@ while running:
                         textset("You reach the second floor")
                         textset("Goblins are stronger!")
                     elif cfloor == floor2:
-                        doorsound.play()
                         cmons = floor3mons 
                         cfloor = floor3
                         textset("You reach the final floor")
@@ -646,6 +645,7 @@ while running:
                         player.loc = [player.loc[0]+1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
                 elif cfloor[player.loc[0]+1][player.loc[1]] == 7:
+                    doorsound.play()
                     if cfloor == floor1:
                         cfloor = floor2
                         cmons = floor2mons
@@ -667,6 +667,7 @@ while running:
                         player.loc = [player.loc[0],player.loc[1]-1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]-16]
                 elif cfloor[player.loc[0]][player.loc[1]-1] == 7:
+                    doorsound.play()
                     if cfloor == floor1:
                         cfloor = floor2
                         cmons = floor2mons
@@ -689,6 +690,7 @@ while running:
                         player.loc = [player.loc[0],player.loc[1]+1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]+16]
                 elif cfloor[player.loc[0]][player.loc[1]+1] == 7:
+                    doorsound.play()
                     if cfloor == floor1:
                         cfloor = floor2
                         cmons = floor2mons
