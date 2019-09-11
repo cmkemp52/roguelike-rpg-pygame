@@ -15,6 +15,7 @@ pygame.mixer.pre_init(22050, -16, 2, 1024)
 pygame.init()
 soundeffect = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
 song = pygame.mixer.music.load(os.path.join(img_folder, "game song.mp3"))
+doorsound = pygame.mixer.Sound(os.path.join(img_folder, "Door sound.wav"))
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(.3)
 
@@ -506,7 +507,6 @@ class BossGoblin(pygame.sprite.Sprite):
             all_sprites.remove(self)
 
 
-bossspawn = False
 class Floorset(pygame.sprite.Sprite):
     def __init__(self,locat):
         #initialize sprite
@@ -616,20 +616,21 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]-1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
-                                soundeffect.play(0)
-                                
+                                soundeff.play(0)
                     #else move into that spot
                     else:
                         player.loc = [player.loc[0]-1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]-16,player.rect.center[1]]
                 #if floor is a door, go to next floor
                 elif cfloor[player.loc[0]-1][player.loc[1]] == 7:
+                    doorsound.play()
                     if cfloor == floor1:
                         cfloor = floor2
                         cmons = floor2mons
                         textset("You reach the second floor")
                         textset("Goblins are stronger!")
                     elif cfloor == floor2:
+                        doorsound.play()
                         cmons = floor3mons 
                         cfloor = floor3
                         textset("You reach the final floor")
@@ -640,7 +641,7 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]+1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
-                                soundeffect.play(0)
+                                soundeff.play(0)
                     else:
                         player.loc = [player.loc[0]+1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
@@ -661,7 +662,7 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0],player.loc[1]-1] and goblin.name == "goblin":
                                 player.attack(goblin)
-                                soundeffect.play(0)
+                                soundeff.play(0)
                     else:
                         player.loc = [player.loc[0],player.loc[1]-1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]-16]
@@ -682,7 +683,8 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0],player.loc[1]+1] and goblin.name == "goblin":
                                 player.attack(goblin)
-                                soundeffect.play(0)       
+                                soundeff.play(0)
+                                
                     else:
                         player.loc = [player.loc[0],player.loc[1]+1]
                         player.rect.center = [player.rect.center[0],player.rect.center[1]+16]
