@@ -16,6 +16,7 @@ pygame.init()
 soundeffect = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
 song = pygame.mixer.music.load(os.path.join(img_folder, "game song.mp3"))
 doorsound = pygame.mixer.Sound(os.path.join(img_folder, "doorsound.ogg"))
+armorsound = doorsound = pygame.mixer.Sound(os.path.join(img_folder, "armor.ogg"))
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(.3)
 
@@ -393,6 +394,7 @@ class Goblin(pygame.sprite.Sprite):
             #goblin dead
             if random.randint(1,15) == 15 and player.armor==0:
                 player.armup()
+                armorsound.play()
             if random.randint(1,15) == 15 and player.weapon==0:
                 player.weapup()
             textset("You kill the goblin!")
