@@ -13,9 +13,11 @@ abe = pygame.image.load(os.path.join(img_folder, 'abe.png'))
 healthsheet = pygame.image.load(os.path.join(img_folder, 'redSheet.png'))
 pygame.mixer.pre_init(22050, -16, 2, 1024)
 pygame.init()
-pygame.mixer.quit()
-pygame.mixer.init(22050, -16, 2, 1024)
-soundeffect = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
+soundeff = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
+song = pygame.mixer.music.load(os.path.join(img_folder, "game song.mp3"))
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(.3)
+
 #Parameters
 WIDTH = 800
 HEIGHT = 600
@@ -559,7 +561,6 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]-1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
-                                soundeffect.play(loops=0, maxtime=1, fade_ms=90)
                                 
 
                     #else move into that spot
@@ -583,7 +584,6 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0]+1,player.loc[1]] and goblin.name == "goblin":
                                 player.attack(goblin)
-                                soundeffect.play(0)
                     else:
                         player.loc = [player.loc[0]+1,player.loc[1]]
                         player.rect.center = [player.rect.center[0]+16,player.rect.center[1]]
@@ -623,7 +623,6 @@ while running:
                         for goblin in all_sprites:
                             if goblin.loc == [player.loc[0],player.loc[1]+1] and goblin.name == "goblin":
                                 player.attack(goblin)
-                                soundeffect.play(0)
 
                                 
                     else:
