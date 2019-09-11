@@ -15,7 +15,7 @@ pygame.mixer.pre_init(22050, -16, 2, 1024)
 pygame.init()
 soundeff = pygame.mixer.Sound(os.path.join(img_folder, "soundeffect2.ogg"))
 song = pygame.mixer.music.load(os.path.join(img_folder, "game song.mp3"))
-doorsound = pygame.mixer.Sound(os.path.join(img_folder, "Door sound.wav"))
+doorsound = pygame.mixer.Sound(os.path.join(img_folder, "doorsound.ogg"))
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(.3)
 
